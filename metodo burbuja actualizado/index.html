@@ -1,18 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <!-- =========================================================
+       CONFIGURACIÓN BÁSICA DEL DOCUMENTO
+       - charset: asegura caracteres como acentos (á, é, í, ó, ú)
+       - viewport: permite que sea responsivo en celulares
+       ========================================================= -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Título que aparece en la pestaña del navegador -->
   <title>Método Burbuja - Calificaciones</title>
 
-  <!-- CSS externo -->
+  <!-- CSS externo: aquí está todo el diseño/estilos -->
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
 
+  <!-- =========================================================
+       CONTENEDOR PRINCIPAL
+       - main.app agrupa toda la interfaz
+       ========================================================= -->
   <main class="app">
-    <!-- Encabezado con logos -->
+
+    <!-- =========================================================
+         ENCABEZADO
+         - Contiene 2 logos (izq/der) y el título/descripcion al centro
+         - Los logos usan onerror para mostrar "LOGO" si falla la imagen
+         ========================================================= -->
     <header class="header">
+
       <!-- Logo Izquierdo -->
       <div class="logo-box logo-left" aria-label="Logo izquierdo">
         <img
@@ -20,13 +37,19 @@
           alt="Logo izquierdo"
           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
         >
+        <!-- Placeholder si la imagen no carga -->
         <div class="logo-placeholder">LOGO</div>
       </div>
 
       <!-- Contenido central del encabezado -->
       <div class="header-center">
+        <!-- Nombre del autor (puede ser alumno) -->
         <div class="badge">Gamboa Rodriguez Erick Anselmo</div>
+
+        <!-- Título principal -->
         <h1>Método Burbuja</h1>
+
+        <!-- Descripción de uso -->
         <p>
           Agrega el <b>nombre</b> y la <b>calificación (0 a 10)</b>.
           Luego ordena para ver la más baja y la más alta.
@@ -44,17 +67,28 @@
       </div>
     </header>
 
-    <!-- Tarjeta principal -->
+    <!-- =========================================================
+         TARJETA PRINCIPAL
+         - Contiene: herramientas extra, formulario, paneles de lista y resultados
+         ========================================================= -->
     <section class="card">
 
-      <!-- ===== HERRAMIENTAS EXTRA (INTERACCIÓN) ===== -->
+      <!-- =========================================================
+           HERRAMIENTAS EXTRA (INTERACCIÓN)
+           - Buscador: filtra registros por nombre
+           - Ordenar: permite ordenar por nombre/calificación y asc/desc
+           - Botones: ordenar, generar aleatorios, guardar/cargar, exportar y deshacer
+           ========================================================= -->
       <div class="tools">
+
+        <!-- Buscador por nombre (filtro en tiempo real) -->
         <div class="input-wrap">
           <label for="buscador">Buscar por nombre</label>
           <input id="buscador" type="text" placeholder="Ej. Erick" autocomplete="off">
           <small>Filtra registros conforme escribes.</small>
         </div>
 
+        <!-- Selector del criterio de ordenamiento -->
         <div class="input-wrap">
           <label for="criterioOrden">Ordenar por</label>
           <select id="criterioOrden">
@@ -64,6 +98,7 @@
           <small>Elige el criterio de orden.</small>
         </div>
 
+        <!-- Selector del tipo de ordenamiento -->
         <div class="input-wrap">
           <label for="direccionOrden">Dirección</label>
           <select id="direccionOrden">
@@ -73,6 +108,7 @@
           <small>Ascendente o descendente.</small>
         </div>
 
+        <!-- Botones de herramientas -->
         <div class="btns tools-btns">
           <button id="btnOrdenarAvanzado" class="btn" type="button">Ordenar (avanzado)</button>
           <button id="btnAleatorio" class="btn" type="button">Aleatorios</button>
@@ -85,7 +121,11 @@
 
       <div class="divider"></div>
 
-      <!-- ===== FORMULARIO PRINCIPAL ===== -->
+      <!-- =========================================================
+           FORMULARIO PRINCIPAL
+           - Captura nombre + calificación
+           - Restricción: calificación de 0 a 10 (HTML + validación en JS)
+           ========================================================= -->
       <div class="row">
         <div class="input-wrap">
           <label for="nombre">Nombre</label>
@@ -113,6 +153,7 @@
           <small>Tip: Presiona <b>Enter</b> para agregar rápido.</small>
         </div>
 
+        <!-- Botones del formulario -->
         <div class="btns">
           <button id="btnAgregar" class="btn primary" type="button">Agregar</button>
           <button id="btnOrdenar" class="btn" type="button">Ordenar (burbuja)</button>
@@ -120,13 +161,18 @@
         </div>
       </div>
 
-      <!-- Mensaje de validación -->
+      <!-- Mensaje dinámico para errores/éxitos -->
       <div id="mensaje" class="mensaje" aria-live="polite"></div>
 
       <div class="divider"></div>
 
-      <!-- Paneles -->
+      <!-- =========================================================
+           PANEL PRINCIPAL (GRID)
+           - Izquierda: lista de registros (chips)
+           - Derecha: resultados + estadísticas
+           ========================================================= -->
       <div class="grid">
+
         <!-- Panel: registros ingresados -->
         <div class="panel">
           <div class="panel-head">
@@ -134,6 +180,7 @@
             <span class="pill" id="contador">0</span>
           </div>
 
+          <!-- Contenedor de chips (registros) -->
           <div id="lista" class="chips empty">
             <div class="empty-state">
               <div class="dot"></div>
@@ -154,11 +201,14 @@
           </div>
 
           <div class="result">
+
+            <!-- Muestra el arreglo ordenado -->
             <div class="result-block">
               <span class="k">Orden (nombre - calificación)</span>
               <div id="ordenadas" class="mono muted">—</div>
             </div>
 
+            <!-- Mínimo y máximo -->
             <div class="stats">
               <div class="stat">
                 <span class="k">Más baja</span>
@@ -173,7 +223,7 @@
               </div>
             </div>
 
-            <!-- ===== ESTADÍSTICAS EXTRA ===== -->
+            <!-- Estadísticas extra -->
             <div class="stats stats-extra">
               <div class="stat">
                 <span class="k">Promedio</span>
@@ -196,29 +246,44 @@
               </div>
             </div>
 
+            <!-- Ayuda al usuario -->
             <div class="hint">
               <span class="spark">i</span>
               <span>Ordena cuando quieras. Se respeta el rango de 0 a 10.</span>
             </div>
+
           </div>
         </div>
       </div>
     </section>
-
   </main>
 
   <script>
     /**********************************************************************
-     * MÉTODO BURBUJA (Bubble Sort) PARA REGISTROS DE CALIFICACIONES
+     * PROGRAMA: MÉTODO BURBUJA PARA CALIFICACIONES (INTERFAZ WEB)
      *
-     * - Cada registro tiene: { nombre: string, calificacion: number }
-     * - El ordenamiento es ascendente por "calificacion"
-     * - Se devuelve un arreglo nuevo (no modifica el original)
+     * OBJETIVO:
+     *  - Permitir ingresar registros { nombre, calificacion }.
+     *  - Ordenar con método burbuja (por calificación y también avanzado).
+     *  - Mostrar mínima, máxima y estadísticas (promedio, mediana, etc.)
+     *  - Mejorar interacción: buscar, editar, guardar/cargar, exportar, deshacer.
+     *
+     * ESTRUCTURA DEL REGISTRO:
+     *  {
+     *    nombre: string,
+     *    calificacion: number  (0 a 10)
+     *  }
      **********************************************************************/
+
+    /* =========================================================
+       1) ORDENAMIENTO: MÉTODO BURBUJA (por calificación ascendente)
+       ========================================================= */
     function burbuja(registros) {
+      // Creamos copia para no modificar el arreglo original
       const arr = registros.map(r => ({ ...r }));
       const n = arr.length;
 
+      // Burbuja: compara pares consecutivos y los intercambia si están desordenados
       for (let i = 0; i < n - 1; i++) {
         for (let j = 0; j < n - 1 - i; j++) {
           if (arr[j].calificacion > arr[j + 1].calificacion) {
@@ -229,20 +294,21 @@
       return arr;
     }
 
-    /**********************************************************************
-     * ORDENAMIENTO AVANZADO (con burbuja también, pero por criterio)
-     *
-     * criterio: "nombre" o "calificacion"
-     * direccion: "asc" o "desc"
-     **********************************************************************/
+    /* =========================================================
+       2) ORDENAMIENTO AVANZADO (burbuja, pero por criterio/dirección)
+       - criterio: "nombre" o "calificacion"
+       - direccion: "asc" o "desc"
+       ========================================================= */
     function burbujaAvanzado(registros, criterio = "calificacion", direccion = "asc") {
       const arr = registros.map(r => ({ ...r }));
       const n = arr.length;
 
+      // Función interna para comparar 2 registros
       function comparar(a, b) {
         let va = a[criterio];
         let vb = b[criterio];
 
+        // Si se ordena por nombre, se compara en minúsculas
         if (criterio === "nombre") {
           va = String(va).toLowerCase();
           vb = String(vb).toLowerCase();
@@ -253,6 +319,7 @@
         return 0;
       }
 
+      // Recorremos con burbuja e invertimos lógica según asc/desc
       for (let i = 0; i < n - 1; i++) {
         for (let j = 0; j < n - 1 - i; j++) {
           const cmp = comparar(arr[j], arr[j + 1]);
@@ -267,9 +334,9 @@
       return arr;
     }
 
-    /**********************************************************************
-     * REFERENCIAS A ELEMENTOS DEL DOM (HTML)
-     **********************************************************************/
+    /* =========================================================
+       3) REFERENCIAS DOM (capturamos elementos HTML)
+       ========================================================= */
     const inputNombre = document.getElementById("nombre");
     const inputCalificacion = document.getElementById("calificacion");
 
@@ -288,7 +355,7 @@
 
     const mensajeEl = document.getElementById("mensaje");
 
-    // === NUEVAS REFERENCIAS (interacción) ===
+    // Herramientas extra
     const buscadorEl = document.getElementById("buscador");
     const criterioOrdenEl = document.getElementById("criterioOrden");
     const direccionOrdenEl = document.getElementById("direccionOrden");
@@ -300,29 +367,31 @@
     const btnExportar = document.getElementById("btnExportar");
     const btnDeshacer = document.getElementById("btnDeshacer");
 
+    // Estadísticas
     const promedioEl = document.getElementById("promedio");
     const medianaEl = document.getElementById("mediana");
     const aprobadosEl = document.getElementById("aprobados");
     const reprobadosEl = document.getElementById("reprobados");
 
-    /**********************************************************************
-     * ESTADO (datos en memoria)
-     **********************************************************************/
+    /* =========================================================
+       4) ESTADO DEL PROGRAMA
+       - registros: almacena todos los datos ingresados
+       - historial: almacena copias para la función "Deshacer"
+       ========================================================= */
     let registros = [];
-
-    // Historial para "Deshacer"
     let historial = [];
 
+    // Guarda el estado actual para poder deshacer después
     function guardarEnHistorial() {
-      // Guardamos una copia profunda
       historial.push(JSON.stringify(registros));
-      // Evitar historial infinito (opcional)
-      if (historial.length > 30) historial.shift();
+      if (historial.length > 30) historial.shift(); // límite opcional
     }
 
-    /**********************************************************************
-     * FUNCIONES AUXILIARES
-     **********************************************************************/
+    /* =========================================================
+       5) FUNCIONES AUXILIARES (mensajes, validaciones, formato)
+       ========================================================= */
+
+    // Muestra mensajes (ok/error/info) en pantalla
     function mostrarMensaje(texto, tipo = "info") {
       mensajeEl.className = `mensaje ${tipo}`;
       mensajeEl.textContent = texto;
@@ -335,11 +404,13 @@
       }
     }
 
+    // Formatea números eliminando ceros innecesarios (ej. 8.500000 -> 8.5)
     function formatearNumero(n) {
       const fixed = Number(n).toFixed(6);
       return fixed.replace(/\.?0+$/, "");
     }
 
+    // Valida nombre y calificación (0 a 10)
     function validarEntrada(nombre, calificacion) {
       if (!nombre || nombre.trim().length === 0) {
         return { ok: false, error: "Ingresa un nombre válido." };
@@ -354,7 +425,6 @@
         return { ok: false, error: "La calificación debe ser un número." };
       }
 
-      // Restricción 0 a 10
       if (num < 0 || num > 10) {
         return { ok: false, error: "La calificación debe estar entre 0 y 10." };
       }
@@ -362,6 +432,7 @@
       return { ok: true, valor: num };
     }
 
+    // Descarga un archivo (ej. CSV)
     function descargarArchivo(nombre, contenido, tipo) {
       const blob = new Blob([contenido], { type: tipo });
       const url = URL.createObjectURL(blob);
@@ -376,9 +447,9 @@
       URL.revokeObjectURL(url);
     }
 
-    /**********************************************************************
-     * CÁLCULO DE ESTADÍSTICAS
-     **********************************************************************/
+    /* =========================================================
+       6) ESTADÍSTICAS: promedio, mediana, aprobados, reprobados
+       ========================================================= */
     function calcularEstadisticas(registrosOrdenadosPorCalif) {
       const califs = registrosOrdenadosPorCalif.map(r => r.calificacion);
 
@@ -396,9 +467,9 @@
       return { promedio, mediana, aprobados, reprobados };
     }
 
-    /**********************************************************************
-     * RENDER (lista con filtro + editar)
-     **********************************************************************/
+    /* =========================================================
+       7) RENDER: dibujar la lista (con filtro + editar/eliminar)
+       ========================================================= */
     function renderLista() {
       const filtro = (buscadorEl.value || "").trim().toLowerCase();
 
@@ -436,7 +507,7 @@
           <small>#${idx + 1}</small>
         `;
 
-        // Eliminar con clic
+        // CLIC: eliminar registro
         chip.addEventListener("click", () => {
           guardarEnHistorial();
           registros.splice(idx, 1);
@@ -445,7 +516,7 @@
           mostrarMensaje("Registro eliminado.", "info");
         });
 
-        // Editar con doble clic
+        // DOBLE CLIC: editar registro con prompt()
         chip.addEventListener("dblclick", (e) => {
           e.preventDefault();
 
@@ -473,9 +544,9 @@
       });
     }
 
-    /**********************************************************************
-     * RENDER RESULTADOS (incluye estadísticas)
-     **********************************************************************/
+    /* =========================================================
+       8) RENDER RESULTADOS: ordenados + min/max + estadísticas
+       ========================================================= */
     function limpiarResultadosUI() {
       ordenadasEl.textContent = "—";
       minEl.textContent = "—";
@@ -490,25 +561,20 @@
     }
 
     function renderResultados(ordenar = true) {
-      if (registros.length === 0) {
+      if (registros.length === 0 || !ordenar) {
         limpiarResultadosUI();
         return;
       }
 
-      if (!ordenar) {
-        limpiarResultadosUI();
-        return;
-      }
-
-      // Para min/max/estadísticas, SIEMPRE ordenamos por calificación
+      // Para estadísticas y min/max se usa orden por calificación
       const ordenadosPorCalif = burbuja(registros);
 
-      // Mostrar lista ordenada por calificación
+      // Mostrar listado ordenado
       ordenadasEl.textContent = ordenadosPorCalif
         .map(r => `${r.nombre} - ${formatearNumero(r.calificacion)}`)
         .join("   |   ");
 
-      // Min y Max
+      // Mínimo y máximo
       const min = ordenadosPorCalif[0];
       const max = ordenadosPorCalif[ordenadosPorCalif.length - 1];
 
@@ -526,9 +592,11 @@
       reprobadosEl.textContent = stats.reprobados;
     }
 
-    /**********************************************************************
-     * ACCIONES
-     **********************************************************************/
+    /* =========================================================
+       9) ACCIONES PRINCIPALES
+       ========================================================= */
+
+    // Agregar un registro nuevo
     function agregarRegistro() {
       const nombre = inputNombre.value.trim();
       const calificacionRaw = inputCalificacion.value.trim();
@@ -542,6 +610,7 @@
       guardarEnHistorial();
       registros.push({ nombre, calificacion: validacion.valor });
 
+      // Limpiar inputs
       inputNombre.value = "";
       inputCalificacion.value = "";
       inputNombre.focus();
@@ -551,6 +620,7 @@
       mostrarMensaje("Registro agregado.", "ok");
     }
 
+    // Ordenar registros con el burbuja avanzado (por nombre o calificación)
     function ordenarAvanzado() {
       if (registros.length === 0) {
         mostrarMensaje("Primero agrega al menos un registro.", "error");
@@ -564,13 +634,12 @@
       registros = burbujaAvanzado(registros, criterio, direccion);
 
       renderLista();
-
-      // Nota: Resultados siempre se calculan ordenando por calificación
+      // Resultados se calculan con orden por calificación
       renderResultados(true);
-
       mostrarMensaje(`Ordenado por ${criterio} (${direccion}).`, "ok");
     }
 
+    // Generar registros aleatorios (para pruebas rápidas)
     function generarAleatorios() {
       const cantidad = prompt("¿Cuántos registros aleatorios deseas generar? (1 a 50)", "10");
       if (cantidad === null) return;
@@ -581,17 +650,12 @@
         return;
       }
 
-      const nombresBase = [
-        "Ana", "Luis", "Erick", "María", "José", "Sofía", "Diana", "Kevin",
-        "Brenda", "Carlos", "Fernanda", "Jorge", "Paola", "Miguel", "Andrea"
-      ];
+      const nombresBase = ["Ana","Luis","Erick","María","José","Sofía","Diana","Kevin","Brenda","Carlos","Fernanda","Jorge","Paola","Miguel","Andrea"];
 
       guardarEnHistorial();
       for (let i = 0; i < n; i++) {
-        const nombre = nombresBase[Math.floor(Math.random() * nombresBase.length)] + " " +
-                       (Math.floor(Math.random() * 90) + 10);
+        const nombre = nombresBase[Math.floor(Math.random() * nombresBase.length)] + " " + (Math.floor(Math.random() * 90) + 10);
         const calificacion = Math.round((Math.random() * 10) * 10) / 10; // 0.0 a 10.0
-
         registros.push({ nombre, calificacion });
       }
 
@@ -600,11 +664,13 @@
       mostrarMensaje(`Se generaron ${n} registros aleatorios.`, "ok");
     }
 
+    // Guardar datos en el navegador (localStorage)
     function guardarDatos() {
       localStorage.setItem("registros_calificaciones", JSON.stringify(registros));
       mostrarMensaje("Datos guardados correctamente.", "ok");
     }
 
+    // Cargar datos desde localStorage
     function cargarDatos() {
       const data = localStorage.getItem("registros_calificaciones");
       if (!data) {
@@ -620,6 +686,7 @@
       mostrarMensaje("Datos cargados correctamente.", "ok");
     }
 
+    // Exportar a CSV
     function exportarCSV() {
       if (registros.length === 0) {
         mostrarMensaje("No hay datos para exportar.", "error");
@@ -639,6 +706,7 @@
       mostrarMensaje("CSV exportado.", "ok");
     }
 
+    // Deshacer última acción
     function deshacer() {
       if (historial.length === 0) {
         mostrarMensaje("No hay acciones para deshacer.", "error");
@@ -653,11 +721,14 @@
       mostrarMensaje("Acción deshecha.", "info");
     }
 
-    /**********************************************************************
-     * EVENTOS
-     **********************************************************************/
+    /* =========================================================
+       10) EVENTOS (interacción del usuario)
+       ========================================================= */
+
+    // Botón agregar
     btnAgregar.addEventListener("click", agregarRegistro);
 
+    // Ordenar con burbuja (por calificación)
     btnOrdenar.addEventListener("click", () => {
       if (registros.length === 0) {
         mostrarMensaje("Primero agrega al menos un registro.", "error");
@@ -667,6 +738,7 @@
       mostrarMensaje("Registros ordenados con método burbuja.", "ok");
     });
 
+    // Limpiar todo
     btnLimpiar.addEventListener("click", () => {
       guardarEnHistorial();
       registros = [];
@@ -677,17 +749,15 @@
       mostrarMensaje("Todo limpio.", "info");
     });
 
-    // Enter para agregar (si estás en cualquiera de los dos inputs)
+    // Enter para agregar desde inputs
     [inputNombre, inputCalificacion].forEach(input => {
       input.addEventListener("keydown", (e) => {
         if (e.key === "Enter") agregarRegistro();
       });
     });
 
-    // Buscar en tiempo real
-    buscadorEl.addEventListener("input", () => {
-      renderLista();
-    });
+    // Filtro en tiempo real (buscador)
+    buscadorEl.addEventListener("input", renderLista);
 
     // Botones extra
     btnOrdenarAvanzado.addEventListener("click", ordenarAvanzado);
@@ -697,7 +767,7 @@
     btnExportar.addEventListener("click", exportarCSV);
     btnDeshacer.addEventListener("click", deshacer);
 
-    // Inicialización
+    // Inicialización al cargar la página
     renderLista();
     renderResultados(false);
   </script>
