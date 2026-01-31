@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Método Burbuja - Calificaciones</title>
+
+  <!-- Vinculamos el CSS externo -->
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+  <main class="app">
+    <!-- Encabezado con logos -->
+    <header class="header">
+      <!-- Logo Izquierdo -->
+      <div class="logo-box logo-left" aria-label="Logo izquierdo">
+        <!-- Reemplaza la ruta con tu imagen -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Escudo_unach.png" alt="Logo izquierdo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="logo-placeholder">LOGO</div>
+      </div>
+
+      <!-- Contenido central del encabezado -->
+      <div class="header-center">
+        <div class="badge">Gamboa Rodriguez Erick Anselmo</div>
+        <h1>Método Burbuja</h1>
+        <p>
+          Agrega el <b>nombre</b> y la <b>calificación (0 a 10)</b>.
+          Luego ordena para ver la más baja y la más alta.
+        </p>
+      </div>
+
+      <!-- Logo Derecho -->
+      <div class="logo-box logo-right" aria-label="Logo derecho">
+        <!-- Reemplaza la ruta con tu imagen -->
+        <img src="https://fca.unach.mx/templates/plantillainstitucionalv2/images/fca_logo.svg" alt="Logo derecho" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="logo-placeholder">LOGO</div>
+      </div>
+    </header>
+
+    <!-- Tarjeta principal -->
+    <section class="card">
+      <!-- Fila superior: formulario + botones -->
+      <div class="row">
+        <div class="input-wrap">
+          <label for="nombre">Nombre</label>
+          <input
+            id="nombre"
+            type="text"
+            placeholder="Ej. Erick Gamboa"
+            autocomplete="off"
+          />
+          <small>Tip: Escribe el nombre del alumno.</small>
+        </div>
+
+        <div class="input-wrap">
+          <label for="calificacion">Calificación (0 a 10)</label>
+          <input
+            id="calificacion"
+            type="number"
+            step="any"
+            min="0"
+            max="10"
+            inputmode="decimal"
+            placeholder="Ej. 8.5"
+            autocomplete="off"
+          />
+          <small>Tip: Presiona <b>Enter</b> para agregar rápido.</small>
+        </div>
+
+        <div class="btns">
+          <button id="btnAgregar" class="btn primary" type="button">Agregar</button>
+          <button id="btnOrdenar" class="btn" type="button">Ordenar</button>
+          <button id="btnLimpiar" class="btn danger" type="button">Limpiar</button>
+        </div>
+      </div>
+
+      <!-- Mensaje de validación -->
+      <div id="mensaje" class="mensaje" aria-live="polite"></div>
+
+      <div class="divider"></div>
+
+      <!-- Paneles -->
+      <div class="grid">
+        <!-- Panel: registros ingresados -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Registros ingresados</h2>
+            <span class="pill" id="contador">0</span>
+          </div>
+
+          <div id="lista" class="chips empty">
+            <div class="empty-state">
+              <div class="dot"></div>
+              <p>Aún no agregas registros.</p>
+            </div>
+          </div>
+
+          <p class="nota">
+            Nota: Haz clic en un registro para eliminarlo.
+          </p>
+        </div>
+
+        <!-- Panel: resultados -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Resultados</h2>
+            <span class="pill subtle">Ordenados</span>
+          </div>
+
+          <div class="result">
+            <div class="result-block">
+              <span class="k">Orden (nombre - calificación)</span>
+              <div id="ordenadas" class="mono muted">—</div>
+            </div>
+
+            <div class="stats">
+              <div class="stat">
+                <span class="k">Más baja</span>
+                <div id="min" class="v">—</div>
+                <div id="minNombre" class="subv muted">—</div>
+              </div>
+
+              <div class="stat">
+                <span class="k">Más alta</span>
+                <div id="max" class="v">—</div>
+                <div id="maxNombre" class="subv muted">—</div>
+              </div>
+            </div>
+
+            <div class="hint">
+              <span class="spark">i</span>
+              <span>Ordena cuando quieras. Se respeta el rango de 0 a 10.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /**********************************************************************
+     * MÉTODO BURBUJA (Bubble Sort) PARA REGISTROS DE CALIFICACIONES
+     *
+     * - Cada registro tiene: { nombre: string, calificacion: number }
+     * - El ordenamiento es ascendente por "calificacion"
+     * - Se devuelve un arreglo nuevo (no modifica el original)
+     **********************************************************************/
+    function burbuja(registros) {
+      const arr = registros.map(r => ({ ...r }));
+      const n = arr.length;
+
+      for (let i = 0; i < n - 1; i++) {
+        for (let j = 0; j < n - 1 - i; j++) {
+          if (arr[j].calificacion > arr[j + 1].calificacion) {
+            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          }
+        }
+      }
+      return arr;
+    }
+
+    /**********************************************************************
+     * REFERENCIAS A ELEMENTOS DEL DOM (HTML)
+     **********************************************************************/
+    const inputNombre = document.getElementById("nombre");
+    const inputCalificacion = document.getElementById("calificacion");
+
+    const btnAgregar = document.getElementById("btnAgregar");
+    const btnOrdenar = document.getElementById("btnOrdenar");
+    const btnLimpiar = document.getElementById("btnLimpiar");
+
+    const listaEl = document.getElementById("lista");
+    const contadorEl = document.getElementById("contador");
+
+    const ordenadasEl = document.getElementById("ordenadas");
+    const minEl = document.getElementById("min");
+    const maxEl = document.getElementById("max");
+    const minNombreEl = document.getElementById("minNombre");
+    const maxNombreEl = document.getElementById("maxNombre");
+
+    const mensajeEl = document.getElementById("mensaje");
+
+    /**********************************************************************
+     * ESTADO (datos en memoria)
+     **********************************************************************/
+    let registros = [];
+
+    /**********************************************************************
+     * FUNCIONES AUXILIARES
+     **********************************************************************/
+    function mostrarMensaje(texto, tipo = "info") {
+      mensajeEl.className = `mensaje ${tipo}`;
+      mensajeEl.textContent = texto;
+
+      if (texto) {
+        setTimeout(() => {
+          mensajeEl.textContent = "";
+          mensajeEl.className = "mensaje";
+        }, 2400);
+      }
+    }
+
+    function formatearNumero(n) {
+      const fixed = Number(n).toFixed(6);
+      return fixed.replace(/\.?0+$/, "");
+    }
+
+    function validarEntrada(nombre, calificacion) {
+      if (!nombre || nombre.trim().length === 0) {
+        return { ok: false, error: "Ingresa un nombre válido." };
+      }
+
+      if (calificacion === "" || calificacion === null || calificacion === undefined) {
+        return { ok: false, error: "Ingresa una calificación." };
+      }
+
+      const num = Number(calificacion);
+      if (Number.isNaN(num)) {
+        return { ok: false, error: "La calificación debe ser un número." };
+      }
+
+      // Restricción solicitada: 0 a 10
+      if (num < 0 || num > 10) {
+        return { ok: false, error: "La calificación debe estar entre 0 y 10." };
+      }
+
+      return { ok: true, valor: num };
+    }
+
+    /**********************************************************************
+     * RENDER
+     **********************************************************************/
+    function renderLista() {
+      contadorEl.textContent = registros.length;
+
+      if (registros.length === 0) {
+        listaEl.classList.add("empty");
+        listaEl.innerHTML = `
+          <div class="empty-state">
+            <div class="dot"></div>
+            <p>Aún no agregas registros.</p>
+          </div>
+        `;
+        return;
+      }
+
+      listaEl.classList.remove("empty");
+      listaEl.innerHTML = "";
+
+      registros.forEach((r, idx) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "chip";
+        chip.title = "Clic para eliminar";
+
+        chip.innerHTML = `
+          <span class="chip-title">${r.nombre}</span>
+          <span class="chip-value">${formatearNumero(r.calificacion)}</span>
+          <small>#${idx + 1}</small>
+        `;
+
+        chip.addEventListener("click", () => {
+          registros.splice(idx, 1);
+          renderLista();
+          renderResultados(false);
+          mostrarMensaje("Registro eliminado.", "info");
+        });
+
+        listaEl.appendChild(chip);
+      });
+    }
+
+    function renderResultados(ordenar = true) {
+      if (registros.length === 0) {
+        ordenadasEl.textContent = "—";
+        minEl.textContent = "—";
+        maxEl.textContent = "—";
+        minNombreEl.textContent = "—";
+        maxNombreEl.textContent = "—";
+        return;
+      }
+
+      const ordenados = ordenar ? burbuja(registros) : null;
+
+      if (ordenar) {
+        ordenadasEl.textContent = ordenados
+          .map(r => `${r.nombre} - ${formatearNumero(r.calificacion)}`)
+          .join("   |   ");
+
+        const min = ordenados[0];
+        const max = ordenados[ordenados.length - 1];
+
+        minEl.textContent = formatearNumero(min.calificacion);
+        minNombreEl.textContent = min.nombre;
+
+        maxEl.textContent = formatearNumero(max.calificacion);
+        maxNombreEl.textContent = max.nombre;
+      } else {
+        ordenadasEl.textContent = "—";
+        minEl.textContent = "—";
+        maxEl.textContent = "—";
+        minNombreEl.textContent = "—";
+        maxNombreEl.textContent = "—";
+      }
+    }
+
+    /**********************************************************************
+     * ACCIONES
+     **********************************************************************/
+    function agregarRegistro() {
+      const nombre = inputNombre.value.trim();
+      const calificacionRaw = inputCalificacion.value.trim();
+
+      const validacion = validarEntrada(nombre, calificacionRaw);
+      if (!validacion.ok) {
+        mostrarMensaje(validacion.error, "error");
+        return;
+      }
+
+      registros.push({ nombre, calificacion: validacion.valor });
+
+      inputNombre.value = "";
+      inputCalificacion.value = "";
+      inputNombre.focus();
+
+      renderLista();
+      renderResultados(false);
+      mostrarMensaje("Registro agregado.", "ok");
+    }
+
+    /**********************************************************************
+     * EVENTOS
+     **********************************************************************/
+    btnAgregar.addEventListener("click", agregarRegistro);
+
+    btnOrdenar.addEventListener("click", () => {
+      if (registros.length === 0) {
+        mostrarMensaje("Primero agrega al menos un registro.", "error");
+        return;
+      }
+      renderResultados(true);
+      mostrarMensaje("Registros ordenados con método burbuja.", "ok");
+    });
+
+    btnLimpiar.addEventListener("click", () => {
+      registros = [];
+      renderLista();
+      renderResultados(false);
+      inputNombre.focus();
+      mostrarMensaje("Todo limpio.", "info");
+    });
+
+    [inputNombre, inputCalificacion].forEach(input => {
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") agregarRegistro();
+      });
+    });
+
+    renderLista();
+    renderResultados(false);
+  </script>
+</body>
+</html>
