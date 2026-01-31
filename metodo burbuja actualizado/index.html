@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Método Burbuja - Calificaciones</title>
 
-  <!-- Vinculamos el CSS externo -->
+  <!-- CSS externo -->
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
@@ -15,8 +15,11 @@
     <header class="header">
       <!-- Logo Izquierdo -->
       <div class="logo-box logo-left" aria-label="Logo izquierdo">
-        <!-- Reemplaza la ruta con tu imagen -->
-        <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Escudo_unach.png" alt="Logo izquierdo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/3/33/Escudo_unach.png"
+          alt="Logo izquierdo"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        >
         <div class="logo-placeholder">LOGO</div>
       </div>
 
@@ -32,15 +35,57 @@
 
       <!-- Logo Derecho -->
       <div class="logo-box logo-right" aria-label="Logo derecho">
-        <!-- Reemplaza la ruta con tu imagen -->
-        <img src="https://fca.unach.mx/templates/plantillainstitucionalv2/images/fca_logo.svg" alt="Logo derecho" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <img
+          src="https://fca.unach.mx/templates/plantillainstitucionalv2/images/fca_logo.svg"
+          alt="Logo derecho"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        >
         <div class="logo-placeholder">LOGO</div>
       </div>
     </header>
 
     <!-- Tarjeta principal -->
     <section class="card">
-      <!-- Fila superior: formulario + botones -->
+
+      <!-- ===== HERRAMIENTAS EXTRA (INTERACCIÓN) ===== -->
+      <div class="tools">
+        <div class="input-wrap">
+          <label for="buscador">Buscar por nombre</label>
+          <input id="buscador" type="text" placeholder="Ej. Erick" autocomplete="off">
+          <small>Filtra registros conforme escribes.</small>
+        </div>
+
+        <div class="input-wrap">
+          <label for="criterioOrden">Ordenar por</label>
+          <select id="criterioOrden">
+            <option value="calificacion">Calificación</option>
+            <option value="nombre">Nombre</option>
+          </select>
+          <small>Elige el criterio de orden.</small>
+        </div>
+
+        <div class="input-wrap">
+          <label for="direccionOrden">Dirección</label>
+          <select id="direccionOrden">
+            <option value="asc">Ascendente</option>
+            <option value="desc">Descendente</option>
+          </select>
+          <small>Ascendente o descendente.</small>
+        </div>
+
+        <div class="btns tools-btns">
+          <button id="btnOrdenarAvanzado" class="btn" type="button">Ordenar (avanzado)</button>
+          <button id="btnAleatorio" class="btn" type="button">Aleatorios</button>
+          <button id="btnGuardar" class="btn" type="button">Guardar</button>
+          <button id="btnCargar" class="btn" type="button">Cargar</button>
+          <button id="btnExportar" class="btn" type="button">Exportar CSV</button>
+          <button id="btnDeshacer" class="btn" type="button">Deshacer</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ===== FORMULARIO PRINCIPAL ===== -->
       <div class="row">
         <div class="input-wrap">
           <label for="nombre">Nombre</label>
@@ -70,7 +115,7 @@
 
         <div class="btns">
           <button id="btnAgregar" class="btn primary" type="button">Agregar</button>
-          <button id="btnOrdenar" class="btn" type="button">Ordenar</button>
+          <button id="btnOrdenar" class="btn" type="button">Ordenar (burbuja)</button>
           <button id="btnLimpiar" class="btn danger" type="button">Limpiar</button>
         </div>
       </div>
@@ -97,7 +142,7 @@
           </div>
 
           <p class="nota">
-            Nota: Haz clic en un registro para eliminarlo.
+            • Clic: eliminar &nbsp; • Doble clic: editar &nbsp; • Usa el buscador para filtrar
           </p>
         </div>
 
@@ -125,6 +170,29 @@
                 <span class="k">Más alta</span>
                 <div id="max" class="v">—</div>
                 <div id="maxNombre" class="subv muted">—</div>
+              </div>
+            </div>
+
+            <!-- ===== ESTADÍSTICAS EXTRA ===== -->
+            <div class="stats stats-extra">
+              <div class="stat">
+                <span class="k">Promedio</span>
+                <div id="promedio" class="v">—</div>
+              </div>
+
+              <div class="stat">
+                <span class="k">Mediana</span>
+                <div id="mediana" class="v">—</div>
+              </div>
+
+              <div class="stat">
+                <span class="k">Aprobados (>= 6)</span>
+                <div id="aprobados" class="v">—</div>
+              </div>
+
+              <div class="stat">
+                <span class="k">Reprobados (&lt; 6)</span>
+                <div id="reprobados" class="v">—</div>
               </div>
             </div>
 
@@ -162,6 +230,44 @@
     }
 
     /**********************************************************************
+     * ORDENAMIENTO AVANZADO (con burbuja también, pero por criterio)
+     *
+     * criterio: "nombre" o "calificacion"
+     * direccion: "asc" o "desc"
+     **********************************************************************/
+    function burbujaAvanzado(registros, criterio = "calificacion", direccion = "asc") {
+      const arr = registros.map(r => ({ ...r }));
+      const n = arr.length;
+
+      function comparar(a, b) {
+        let va = a[criterio];
+        let vb = b[criterio];
+
+        if (criterio === "nombre") {
+          va = String(va).toLowerCase();
+          vb = String(vb).toLowerCase();
+        }
+
+        if (va > vb) return 1;
+        if (va < vb) return -1;
+        return 0;
+      }
+
+      for (let i = 0; i < n - 1; i++) {
+        for (let j = 0; j < n - 1 - i; j++) {
+          const cmp = comparar(arr[j], arr[j + 1]);
+          const debeIntercambiar = direccion === "asc" ? (cmp > 0) : (cmp < 0);
+
+          if (debeIntercambiar) {
+            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          }
+        }
+      }
+
+      return arr;
+    }
+
+    /**********************************************************************
      * REFERENCIAS A ELEMENTOS DEL DOM (HTML)
      **********************************************************************/
     const inputNombre = document.getElementById("nombre");
@@ -182,10 +288,37 @@
 
     const mensajeEl = document.getElementById("mensaje");
 
+    // === NUEVAS REFERENCIAS (interacción) ===
+    const buscadorEl = document.getElementById("buscador");
+    const criterioOrdenEl = document.getElementById("criterioOrden");
+    const direccionOrdenEl = document.getElementById("direccionOrden");
+
+    const btnOrdenarAvanzado = document.getElementById("btnOrdenarAvanzado");
+    const btnAleatorio = document.getElementById("btnAleatorio");
+    const btnGuardar = document.getElementById("btnGuardar");
+    const btnCargar = document.getElementById("btnCargar");
+    const btnExportar = document.getElementById("btnExportar");
+    const btnDeshacer = document.getElementById("btnDeshacer");
+
+    const promedioEl = document.getElementById("promedio");
+    const medianaEl = document.getElementById("mediana");
+    const aprobadosEl = document.getElementById("aprobados");
+    const reprobadosEl = document.getElementById("reprobados");
+
     /**********************************************************************
      * ESTADO (datos en memoria)
      **********************************************************************/
     let registros = [];
+
+    // Historial para "Deshacer"
+    let historial = [];
+
+    function guardarEnHistorial() {
+      // Guardamos una copia profunda
+      historial.push(JSON.stringify(registros));
+      // Evitar historial infinito (opcional)
+      if (historial.length > 30) historial.shift();
+    }
 
     /**********************************************************************
      * FUNCIONES AUXILIARES
@@ -221,7 +354,7 @@
         return { ok: false, error: "La calificación debe ser un número." };
       }
 
-      // Restricción solicitada: 0 a 10
+      // Restricción 0 a 10
       if (num < 0 || num > 10) {
         return { ok: false, error: "La calificación debe estar entre 0 y 10." };
       }
@@ -229,18 +362,58 @@
       return { ok: true, valor: num };
     }
 
+    function descargarArchivo(nombre, contenido, tipo) {
+      const blob = new Blob([contenido], { type: tipo });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = nombre;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+    }
+
     /**********************************************************************
-     * RENDER
+     * CÁLCULO DE ESTADÍSTICAS
+     **********************************************************************/
+    function calcularEstadisticas(registrosOrdenadosPorCalif) {
+      const califs = registrosOrdenadosPorCalif.map(r => r.calificacion);
+
+      const suma = califs.reduce((a, b) => a + b, 0);
+      const promedio = suma / califs.length;
+
+      const mitad = Math.floor(califs.length / 2);
+      const mediana = (califs.length % 2 === 0)
+        ? (califs[mitad - 1] + califs[mitad]) / 2
+        : califs[mitad];
+
+      const aprobados = califs.filter(x => x >= 6).length;
+      const reprobados = califs.filter(x => x < 6).length;
+
+      return { promedio, mediana, aprobados, reprobados };
+    }
+
+    /**********************************************************************
+     * RENDER (lista con filtro + editar)
      **********************************************************************/
     function renderLista() {
+      const filtro = (buscadorEl.value || "").trim().toLowerCase();
+
+      const registrosFiltrados = filtro
+        ? registros.filter(r => r.nombre.toLowerCase().includes(filtro))
+        : registros;
+
       contadorEl.textContent = registros.length;
 
-      if (registros.length === 0) {
+      if (registrosFiltrados.length === 0) {
         listaEl.classList.add("empty");
         listaEl.innerHTML = `
           <div class="empty-state">
             <div class="dot"></div>
-            <p>Aún no agregas registros.</p>
+            <p>No hay registros que coincidan.</p>
           </div>
         `;
         return;
@@ -249,11 +422,13 @@
       listaEl.classList.remove("empty");
       listaEl.innerHTML = "";
 
-      registros.forEach((r, idx) => {
+      registrosFiltrados.forEach((r) => {
+        const idx = registros.indexOf(r);
+
         const chip = document.createElement("button");
         chip.type = "button";
         chip.className = "chip";
-        chip.title = "Clic para eliminar";
+        chip.title = "Clic: eliminar | Doble clic: editar";
 
         chip.innerHTML = `
           <span class="chip-title">${r.nombre}</span>
@@ -261,49 +436,94 @@
           <small>#${idx + 1}</small>
         `;
 
+        // Eliminar con clic
         chip.addEventListener("click", () => {
+          guardarEnHistorial();
           registros.splice(idx, 1);
           renderLista();
           renderResultados(false);
           mostrarMensaje("Registro eliminado.", "info");
         });
 
+        // Editar con doble clic
+        chip.addEventListener("dblclick", (e) => {
+          e.preventDefault();
+
+          const nuevoNombre = prompt("Editar nombre:", r.nombre);
+          if (nuevoNombre === null) return;
+
+          const nuevaCal = prompt("Editar calificación (0 a 10):", String(r.calificacion));
+          if (nuevaCal === null) return;
+
+          const validacion = validarEntrada(nuevoNombre.trim(), nuevaCal.trim());
+          if (!validacion.ok) {
+            mostrarMensaje(validacion.error, "error");
+            return;
+          }
+
+          guardarEnHistorial();
+          registros[idx] = { nombre: nuevoNombre.trim(), calificacion: validacion.valor };
+
+          renderLista();
+          renderResultados(false);
+          mostrarMensaje("Registro actualizado.", "ok");
+        });
+
         listaEl.appendChild(chip);
       });
     }
 
+    /**********************************************************************
+     * RENDER RESULTADOS (incluye estadísticas)
+     **********************************************************************/
+    function limpiarResultadosUI() {
+      ordenadasEl.textContent = "—";
+      minEl.textContent = "—";
+      maxEl.textContent = "—";
+      minNombreEl.textContent = "—";
+      maxNombreEl.textContent = "—";
+
+      promedioEl.textContent = "—";
+      medianaEl.textContent = "—";
+      aprobadosEl.textContent = "—";
+      reprobadosEl.textContent = "—";
+    }
+
     function renderResultados(ordenar = true) {
       if (registros.length === 0) {
-        ordenadasEl.textContent = "—";
-        minEl.textContent = "—";
-        maxEl.textContent = "—";
-        minNombreEl.textContent = "—";
-        maxNombreEl.textContent = "—";
+        limpiarResultadosUI();
         return;
       }
 
-      const ordenados = ordenar ? burbuja(registros) : null;
-
-      if (ordenar) {
-        ordenadasEl.textContent = ordenados
-          .map(r => `${r.nombre} - ${formatearNumero(r.calificacion)}`)
-          .join("   |   ");
-
-        const min = ordenados[0];
-        const max = ordenados[ordenados.length - 1];
-
-        minEl.textContent = formatearNumero(min.calificacion);
-        minNombreEl.textContent = min.nombre;
-
-        maxEl.textContent = formatearNumero(max.calificacion);
-        maxNombreEl.textContent = max.nombre;
-      } else {
-        ordenadasEl.textContent = "—";
-        minEl.textContent = "—";
-        maxEl.textContent = "—";
-        minNombreEl.textContent = "—";
-        maxNombreEl.textContent = "—";
+      if (!ordenar) {
+        limpiarResultadosUI();
+        return;
       }
+
+      // Para min/max/estadísticas, SIEMPRE ordenamos por calificación
+      const ordenadosPorCalif = burbuja(registros);
+
+      // Mostrar lista ordenada por calificación
+      ordenadasEl.textContent = ordenadosPorCalif
+        .map(r => `${r.nombre} - ${formatearNumero(r.calificacion)}`)
+        .join("   |   ");
+
+      // Min y Max
+      const min = ordenadosPorCalif[0];
+      const max = ordenadosPorCalif[ordenadosPorCalif.length - 1];
+
+      minEl.textContent = formatearNumero(min.calificacion);
+      minNombreEl.textContent = min.nombre;
+
+      maxEl.textContent = formatearNumero(max.calificacion);
+      maxNombreEl.textContent = max.nombre;
+
+      // Estadísticas
+      const stats = calcularEstadisticas(ordenadosPorCalif);
+      promedioEl.textContent = formatearNumero(stats.promedio);
+      medianaEl.textContent = formatearNumero(stats.mediana);
+      aprobadosEl.textContent = stats.aprobados;
+      reprobadosEl.textContent = stats.reprobados;
     }
 
     /**********************************************************************
@@ -319,6 +539,7 @@
         return;
       }
 
+      guardarEnHistorial();
       registros.push({ nombre, calificacion: validacion.valor });
 
       inputNombre.value = "";
@@ -328,6 +549,108 @@
       renderLista();
       renderResultados(false);
       mostrarMensaje("Registro agregado.", "ok");
+    }
+
+    function ordenarAvanzado() {
+      if (registros.length === 0) {
+        mostrarMensaje("Primero agrega al menos un registro.", "error");
+        return;
+      }
+
+      const criterio = criterioOrdenEl.value;
+      const direccion = direccionOrdenEl.value;
+
+      guardarEnHistorial();
+      registros = burbujaAvanzado(registros, criterio, direccion);
+
+      renderLista();
+
+      // Nota: Resultados siempre se calculan ordenando por calificación
+      renderResultados(true);
+
+      mostrarMensaje(`Ordenado por ${criterio} (${direccion}).`, "ok");
+    }
+
+    function generarAleatorios() {
+      const cantidad = prompt("¿Cuántos registros aleatorios deseas generar? (1 a 50)", "10");
+      if (cantidad === null) return;
+
+      const n = Number(cantidad);
+      if (Number.isNaN(n) || n < 1 || n > 50) {
+        mostrarMensaje("Cantidad inválida. Usa un número entre 1 y 50.", "error");
+        return;
+      }
+
+      const nombresBase = [
+        "Ana", "Luis", "Erick", "María", "José", "Sofía", "Diana", "Kevin",
+        "Brenda", "Carlos", "Fernanda", "Jorge", "Paola", "Miguel", "Andrea"
+      ];
+
+      guardarEnHistorial();
+      for (let i = 0; i < n; i++) {
+        const nombre = nombresBase[Math.floor(Math.random() * nombresBase.length)] + " " +
+                       (Math.floor(Math.random() * 90) + 10);
+        const calificacion = Math.round((Math.random() * 10) * 10) / 10; // 0.0 a 10.0
+
+        registros.push({ nombre, calificacion });
+      }
+
+      renderLista();
+      renderResultados(false);
+      mostrarMensaje(`Se generaron ${n} registros aleatorios.`, "ok");
+    }
+
+    function guardarDatos() {
+      localStorage.setItem("registros_calificaciones", JSON.stringify(registros));
+      mostrarMensaje("Datos guardados correctamente.", "ok");
+    }
+
+    function cargarDatos() {
+      const data = localStorage.getItem("registros_calificaciones");
+      if (!data) {
+        mostrarMensaje("No hay datos guardados.", "error");
+        return;
+      }
+
+      guardarEnHistorial();
+      registros = JSON.parse(data);
+
+      renderLista();
+      renderResultados(false);
+      mostrarMensaje("Datos cargados correctamente.", "ok");
+    }
+
+    function exportarCSV() {
+      if (registros.length === 0) {
+        mostrarMensaje("No hay datos para exportar.", "error");
+        return;
+      }
+
+      const filas = [
+        ["Nombre", "Calificacion"],
+        ...registros.map(r => [r.nombre, String(r.calificacion)])
+      ];
+
+      const csv = filas
+        .map(f => f.map(v => `"${String(v).replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+
+      descargarArchivo("calificaciones.csv", csv, "text/csv;charset=utf-8;");
+      mostrarMensaje("CSV exportado.", "ok");
+    }
+
+    function deshacer() {
+      if (historial.length === 0) {
+        mostrarMensaje("No hay acciones para deshacer.", "error");
+        return;
+      }
+
+      const anterior = historial.pop();
+      registros = JSON.parse(anterior);
+
+      renderLista();
+      renderResultados(false);
+      mostrarMensaje("Acción deshecha.", "info");
     }
 
     /**********************************************************************
@@ -345,19 +668,36 @@
     });
 
     btnLimpiar.addEventListener("click", () => {
+      guardarEnHistorial();
       registros = [];
+      buscadorEl.value = "";
       renderLista();
       renderResultados(false);
       inputNombre.focus();
       mostrarMensaje("Todo limpio.", "info");
     });
 
+    // Enter para agregar (si estás en cualquiera de los dos inputs)
     [inputNombre, inputCalificacion].forEach(input => {
       input.addEventListener("keydown", (e) => {
         if (e.key === "Enter") agregarRegistro();
       });
     });
 
+    // Buscar en tiempo real
+    buscadorEl.addEventListener("input", () => {
+      renderLista();
+    });
+
+    // Botones extra
+    btnOrdenarAvanzado.addEventListener("click", ordenarAvanzado);
+    btnAleatorio.addEventListener("click", generarAleatorios);
+    btnGuardar.addEventListener("click", guardarDatos);
+    btnCargar.addEventListener("click", cargarDatos);
+    btnExportar.addEventListener("click", exportarCSV);
+    btnDeshacer.addEventListener("click", deshacer);
+
+    // Inicialización
     renderLista();
     renderResultados(false);
   </script>
